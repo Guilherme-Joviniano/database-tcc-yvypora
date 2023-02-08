@@ -1,0 +1,258 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model costumer {
+  id            Int      @id @unique @default(autoincrement())
+  name          String   @db.VarChar(45)
+  email         String   @unique @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  picture_uri String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  customer_addresses customer_addresses[]
+
+  shopping_lists shopping_list[]
+}
+
+model deliveryman {
+  id                  Int                   @id @unique @default(autoincrement())
+  name                String                @db.VarChar(45)
+  email               String                @unique @db.VarChar(255)
+  password_hash       String                @db.VarChar(255)
+  picture_uri         String                @db.VarChar(255)
+  location            location              @relation(fields: [locationId], references: [id])
+  locationId          Int                   @unique
+  veicule_deliveryman veicule_deliveryman[]
+  order               order[]
+}
+
+model veicule_deliveryman {
+  id            Int         @id @unique @default(autoincrement())
+  veicule       veicule     @relation(fields: [veiculeId], references: [id])
+  owner         deliveryman @relation(fields: [deliverymanId], references: [id])
+  veiculeId     Int
+  deliverymanId Int
+}
+
+model payment {
+  id               Int            @id @unique @default(autoincrement())
+  status           Boolean        @default(false)
+  details          String
+  payment_method   payment_method @relation(fields: [payment_methodId], references: [id])
+  order            order          @relation(fields: [orderId], references: [id])
+  payment_methodId Int 
+  orderId          Int  @unique
+}
+
+model order {
+  id Int @id @unique @default(autoincrement())
+
+  accepted_status             Boolean @default(false)
+  delivered_status_for_client Boolean @default(false)
+  retreat_products_status     Boolean @default(false)
+
+  owner_address customer_addresses @relation(fields: [customer_addressesId], references: [id])
+
+  deliveryman deliveryman @relation(fields: [deliverymanId], references: [id])
+
+  shopping_list shopping_list @relation(fields: [shopping_listId], references: [id])
+
+  customer_addressesId Int       
+  deliverymanId        Int       
+  shopping_listId      Int       @unique
+  payment              payment[]
+}
+
+model shopping_list {
+  id Int @id @unique @default(autoincrement())
+
+  freight Float?
+  total   Float
+
+  costumer                  costumer                    @relation(fields: [costumerId], references: [id])
+  costumerId                Int                         @unique
+  products_in_shopping_list products_in_shopping_list[]
+  order                     order[]
+}
+
+model products_in_shopping_list {
+  id            Int           @id @unique @default(autoincrement())
+  shopping_list shopping_list @relation(fields: [shopping_listId], references: [id])
+  product       product       @relation(fields: [productId], references: [id])
+
+  shopping_listId Int
+  productId       Int
+}
+
+model product {
+  id                 Int     @id @unique @default(autoincrement())
+  name               String  @db.VarChar(120)
+  price_type         Boolean @default(false)
+  price              Float
+  active_for_selling Boolean @default(true)
+  available_quantity Int
+
+  marketer                  marketer                    @relation(fields: [marketerId], references: [id])
+  marketerId                Int                         @unique
+  products_in_shopping_list products_in_shopping_list[]
+  image_of_product          image_of_product[]
+}
+
+model marketer {
+  id            Int    @id @unique @default(autoincrement())
+  name          String @db.VarChar(45)
+  email         String @unique @db.VarChar(255)
+  password_hash String @db.VarChar(255)
+  picture_uri String?
+  review        Float
+
+  online Boolean @default(false)
+
+  location       location         @relation(fields: [locationId], references: [id])
+  locationId     Int              @unique
+  fair_marketers fair_marketers[]
+  products       product[]
+}
+
+model fair {
+  id      Int     @id @unique @default(autoincrement())
+  address address @relation(fields: [addressId], references: [id])
+
+  review    Float @default(0.0)
+  addressId Int   @unique
+
+  fair_marketers         fair_marketers[]
+  fair_date_hour_of_work fair_date_hour_of_work[]
+}
+
+model fair_marketers {
+  id Int @id @unique @default(autoincrement())
+
+  fair     fair     @relation(fields: [fairId], references: [id])
+  marketer marketer @relation(fields: [marketerId], references: [id])
+
+  fairId     Int
+  marketerId Int
+}
+
+model customer_addresses {
+  id         Int      @id @unique @default(autoincrement())
+  address    address  @relation(fields: [addressId], references: [id])
+  costumer   costumer @relation(fields: [costumerId], references: [id])
+  addressId  Int      @unique
+  costumerId Int
+  order      order[]
+}
+
+model location {
+  id          Int           @id @unique @default(autoincrement())
+  longitude   Float
+  latitude    Float
+  marketer    marketer[]
+  deliveryman deliveryman[]
+}
+
+model address {
+  id             Int          @id @unique @default(autoincrement())
+  CEP            Int
+  logradouro     String       @db.VarChar(120)
+  type           address_type @relation(fields: [address_typeId], references: [id])
+  number         Int
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  address_typeId Int
+
+  customer_addresses customer_addresses?
+  fair               fair?
+}
+
+model address_type {
+  id   Int    @id @unique @default(autoincrement())
+  name String @db.VarChar(90)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  address    address[]
+}
+
+model veicule {
+  id   Int    @id @unique @default(autoincrement())
+  name String @db.VarChar(120)
+
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  veicule_deliveryman veicule_deliveryman[]
+}
+
+model image_of_product {
+  id Int @id @unique @default(autoincrement())
+
+  image   image   @relation(fields: [imageId], references: [id])
+  product product @relation(fields: [productId], references: [id])
+
+  imageId   Int
+  productId Int
+}
+
+model image {
+  id  Int    @id @unique @default(autoincrement())
+  uri String @db.VarChar(255)
+
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  image_of_product image_of_product[]
+}
+
+model payment_method {
+  id   Int    @id @unique @default(autoincrement())
+  name String @db.VarChar(120)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  payment    payment[]
+}
+
+model fair_date_hour_of_work {
+  id    Int                   @id @unique @default(autoincrement())
+  fair  fair                  @relation(fields: [fairId], references: [id])
+  dates date_and_hour_of_work @relation(fields: [date_and_hour_of_workId], references: [id])
+
+  fairId                  Int
+  date_and_hour_of_workId Int
+}
+
+model date_and_hour_of_work {
+  id Int @id @unique @default(autoincrement())
+
+  day_of_week    day_of_week @relation(fields: [day_of_weekId], references: [id])
+  open_datetime  DateTime
+  close_datetime DateTime
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  fair_date_hour_of_work fair_date_hour_of_work[]
+
+  day_of_weekId Int
+}
+
+model day_of_week {
+  id   Int    @id @unique @default(autoincrement())
+  name String @db.VarChar(20)
+
+  date_and_hour_of_work date_and_hour_of_work[]
+}
