@@ -20,7 +20,8 @@
   "homepage": "https://github.com/EduardoMoreiraMachado/database-tcc-yvypora#readme",
   "dependencies": {
     "@prisma/client": "^4.10.0",
-    "prisma": "^4.10.0"
+    "prisma": "^4.10.0",
+    "tsx": "^3.12.3"
   },
   "devDependencies": {
     "@types/node": "^18.13.0",
