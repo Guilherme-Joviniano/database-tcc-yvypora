@@ -389,6 +389,22 @@ async function createShoppingListWithProduct() {
 
 await createShoppingListWithProduct()
 
+
+async function appendImagesInProduct() {
+    await db.image_of_product.createMany({
+        data: [{
+            imageId: 1,
+            productId: 1
+        }, {
+            imageId: 2,
+            productId: 2
+        }]
+    })
+}
+
+await appendImagesInProduct()
+
+
 async function createDeliveryFeatures() {
     await db.order.create({
         data: {
@@ -423,7 +439,6 @@ async function createDeliveryFeatures() {
                     }
                 }
             },
-
         }
     })
 }

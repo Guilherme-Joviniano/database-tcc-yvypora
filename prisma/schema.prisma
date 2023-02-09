@@ -74,7 +74,7 @@ model order {
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @updatedAt
   costumer_addressesId        Int
-  costumer_addresses               costumer_addresses @relation(fields: [costumer_addressesId], references: [id])
+  costumer_addresses          costumer_addresses @relation(fields: [costumer_addressesId], references: [id])
   deliveryman                 deliveryman        @relation(fields: [deliverymanId], references: [id])
   shopping_list               shopping_list      @relation(fields: [shopping_listId], references: [id])
   payment                     payment?
@@ -87,7 +87,7 @@ model shopping_list {
   id                        Int                         @id @unique @default(autoincrement())
   freight                   Float?
   total                     Float
-  costumerId                Int                         
+  costumerId                Int
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
   order                     order?
@@ -115,7 +115,7 @@ model product {
   price                     Float
   active_for_selling        Boolean                     @default(true)
   available_quantity        Int
-  marketerId                Int                         
+  marketerId                Int
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
   image_of_product          image_of_product[]
@@ -165,7 +165,7 @@ model fair_marketers {
 
 model costumer_addresses {
   id         Int      @id @unique @default(autoincrement())
-  addressId  Int      
+  addressId  Int
   costumerId Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -187,14 +187,14 @@ model location {
 }
 
 model address {
-  id                 Int                 @id @unique @default(autoincrement())
+  id                 Int                  @id @unique @default(autoincrement())
   CEP                Int
-  logradouro         String              @db.VarChar(120)
+  logradouro         String               @db.VarChar(120)
   number             Int
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @updatedAt
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
   address_typeId     Int
-  type               address_type        @relation(fields: [address_typeId], references: [id])
+  type               address_type         @relation(fields: [address_typeId], references: [id])
   costumer_addresses costumer_addresses[]
   fair               fair?
 
