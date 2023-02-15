@@ -402,7 +402,7 @@ async function appendImagesInProduct() {
     })
 }
 
-await appendImagesInProduct()
+ await appendImagesInProduct()
 
 
 async function createDeliveryFeatures() {

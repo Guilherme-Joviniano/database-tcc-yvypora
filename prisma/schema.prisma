@@ -11,9 +11,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model gender {
+  id          Int           @id @unique @default(autoincrement())
+  name        String        @db.VarChar(40)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  costumer    costumer[]
+  deliveryman deliveryman[]
+  marketer    marketer[]
+}
+
 model costumer {
   id                 Int                  @id @unique @default(autoincrement())
   name               String               @db.VarChar(45)
+  gender             gender               @relation(fields: [genderId], references: [id])
   email              String               @unique @db.VarChar(255)
   password_hash      String               @db.VarChar(255)
   picture_uri        String?
@@ -21,12 +32,14 @@ model costumer {
   updated_at         DateTime             @updatedAt
   costumer_addresses costumer_addresses[]
   shopping_lists     shopping_list[]
+  genderId           Int
 }
 
 model deliveryman {
   id                  Int                   @id @unique @default(autoincrement())
   name                String                @db.VarChar(45)
   email               String                @unique @db.VarChar(255)
+  gender              gender                @relation(fields: [genderId], references: [id])
   password_hash       String                @db.VarChar(255)
   picture_uri         String                @db.VarChar(255)
   locationId          Int                   @unique
@@ -35,6 +48,7 @@ model deliveryman {
   location            location              @relation(fields: [locationId], references: [id])
   order               order[]
   veicule_deliveryman veicule_deliveryman[]
+  genderId            Int
 }
 
 model veicule_deliveryman {
@@ -126,6 +140,7 @@ model product {
 model marketer {
   id             Int              @id @unique @default(autoincrement())
   name           String           @db.VarChar(45)
+  gender         gender           @relation(fields: [genderId], references: [id])
   email          String           @unique @db.VarChar(255)
   password_hash  String           @db.VarChar(255)
   picture_uri    String?
@@ -137,6 +152,7 @@ model marketer {
   fair_marketers fair_marketers[]
   location       location         @relation(fields: [locationId], references: [id])
   products       product[]
+  genderId       Int
 }
 
 model fair {
