@@ -28,6 +28,7 @@ model costumer {
   email              String               @unique @db.VarChar(255)
   password_hash      String               @db.VarChar(255)
   picture_uri        String?
+  cpf                String?              @unique @db.VarChar(13)
   created_at         DateTime             @default(now())
   updated_at         DateTime             @updatedAt
   costumer_addresses costumer_addresses[]
