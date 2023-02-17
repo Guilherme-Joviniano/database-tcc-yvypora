@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "tsx prisma/seed.mts"
+    "seed": "tsx prisma/novoTeste.mts"
   },
   "repository": {
     "type": "git",

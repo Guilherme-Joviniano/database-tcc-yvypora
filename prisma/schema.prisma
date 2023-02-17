@@ -96,7 +96,7 @@ model order {
 
   @@index([costumer_addressesId], map: "order_costumer_addressesId_fkey")
   @@index([deliverymanId], map: "order_deliverymanId_fkey")
-}
+} 
 
 model shopping_list {
   id                        Int                         @id @unique @default(autoincrement())
@@ -193,13 +193,14 @@ model costumer_addresses {
   costumerId Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  address    address  @relation(fields: [addressId], references: [id])
-  costumer   costumer @relation(fields: [costumerId], references: [id])
-  order      order[]
+  address    address  @relation(fields: [addressId], references: [id],  onDelete: Cascade) 
+  costumer   costumer @relation(fields: [costumerId], references: [id], onDelete: Cascade)
+  order      order[] 
 
   @@index([costumerId], map: "costumer_addresses_costumerId_fkey")
   @@index([addressId], map: "costumer_addresses_addressId_fkey")
 }
+
 
 model location {
   id          Int          @id @unique @default(autoincrement())
