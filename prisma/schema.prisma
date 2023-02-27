@@ -178,6 +178,8 @@ model fair {
   address                address                  @relation(fields: [addressId], references: [id])
   fair_date_hour_of_work fair_date_hour_of_work[]
   fair_marketers         fair_marketers[]
+  location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId             Int
 }
 
 model fair_marketers {
@@ -215,6 +217,7 @@ model location {
   updated_at  DateTime     @updatedAt
   deliveryman deliveryman?
   marketer    marketer?
+  fair        fair[]
 }
 
 model address {
