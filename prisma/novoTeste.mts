@@ -192,8 +192,14 @@ async function createMarketer() {
 
 // await createMarketer();
 
-await db.marketer.delete({
-  where: {
-    id: 11,
-  },
+await db.day_of_week.createMany({
+  data: [
+    { name: "Segunda-Feira" },
+    { name: "Terça-Feira" },
+    { name: "Quarta-Feira" },
+    { name: "Quinta-Feira" },
+    { name: "Sexta-Feira" },
+    { name: "Sabado" },
+    { name: "Domingo" },
+  ],
 });

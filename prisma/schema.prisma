@@ -143,7 +143,17 @@ model product {
   marketer                  marketer                    @relation(fields: [marketerId], references: [id], onDelete: Cascade)
   products_in_shopping_list products_in_shopping_list[]
 
+  category_of_product   category_of_product @relation(fields: [category_of_productId], references: [id], onDelete: Restrict)
+  category_of_productId Int
+
   @@index([marketerId], map: "product_marketerId_fkey")
+}
+
+model category_of_product {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  products product[]
 }
 
 model marketer {
@@ -188,7 +198,7 @@ model fair_marketers {
   marketerId Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  fair       fair     @relation(fields: [fairId], references: [id])
+  fair       fair     @relation(fields: [fairId], references: [id], onDelete: Cascade)
   marketer   marketer @relation(fields: [marketerId], references: [id], onDelete: Cascade)
 
   @@index([fairId], map: "fair_marketers_fairId_fkey")
@@ -222,7 +232,7 @@ model location {
 
 model address {
   id                 Int                  @id @unique @default(autoincrement())
-  CEP                Int
+  cep                String
   number             Int
   created_at         DateTime             @default(now())
   updated_at         DateTime             @updatedAt
@@ -231,6 +241,15 @@ model address {
   type               address_type         @relation(fields: [address_typeId], references: [id])
   costumer_addresses costumer_addresses[]
   fair               fair?
+
+  city   city @relation(fields: [cityId], references: [id])
+  cityId Int
+
+  uf   UF  @relation(fields: [uFId], references: [id])
+  uFId Int
+
+  neighborhood   neighborhood @relation(fields: [neighborhoodId], references: [id])
+  neighborhoodId Int
 
   @@index([address_typeId], map: "address_address_typeId_fkey")
 }
@@ -287,7 +306,7 @@ model fair_date_hour_of_work {
   created_at              DateTime              @default(now())
   updated_at              DateTime              @updatedAt
   dates                   date_and_hour_of_work @relation(fields: [date_and_hour_of_workId], references: [id])
-  fair                    fair                  @relation(fields: [fairId], references: [id])
+  fair                    fair                  @relation(fields: [fairId], references: [id], onDelete: Cascade)
 
   @@index([date_and_hour_of_workId], map: "fair_date_hour_of_work_date_and_hour_of_workId_fkey")
   @@index([fairId], map: "fair_date_hour_of_work_fairId_fkey")
@@ -312,4 +331,22 @@ model day_of_week {
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
   date_and_hour_of_work date_and_hour_of_work[]
+}
+
+model city {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  address address[]
+}
+
+model UF {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  address address[]
+}
+
+model neighborhood {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  address address[]
 }
