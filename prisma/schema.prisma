@@ -150,8 +150,12 @@ model product {
 }
 
 model category_of_product {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id Int @id @default(autoincrement())
+  imageId Int
+  
+  name    String @unique
+
+  image image @relation(fields: [imageId], references: [id])
 
   products product[]
 }
@@ -284,11 +288,12 @@ model image_of_product {
 }
 
 model image {
-  id               Int                @id @unique @default(autoincrement())
-  uri              String             @db.VarChar(255)
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @updatedAt
-  image_of_product image_of_product[]
+  id                  Int                   @id @unique @default(autoincrement())
+  uri                 String                @db.VarChar(255)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  image_of_product    image_of_product[]
+  category_of_product category_of_product[]
 }
 
 model payment_method {
