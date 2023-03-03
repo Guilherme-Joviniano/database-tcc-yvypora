@@ -323,6 +323,7 @@ async function createProduct() {
         name: "Maça",
         marketerId: 2,
         price: 2,
+        category_of_productId
       },
       {
         available_quantity: 24,

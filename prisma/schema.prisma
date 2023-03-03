@@ -132,7 +132,6 @@ model products_in_shopping_list {
 model product {
   id                        Int                         @id @unique @default(autoincrement())
   name                      String                      @db.VarChar(120)
-  price_type                Boolean                     @default(false)
   price                     Float
   active_for_selling        Boolean                     @default(true)
   available_quantity        Int
@@ -146,14 +145,32 @@ model product {
   category_of_product   category_of_product @relation(fields: [category_of_productId], references: [id], onDelete: Restrict)
   category_of_productId Int
 
+  type_of_price   type_of_price @relation(fields: [type_of_productId], references: [id])
+  type_of_productId Int
+
+  sale_off sale_off[]
+
   @@index([marketerId], map: "product_marketerId_fkey")
 }
 
+model type_of_price {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products product[]
+}
+
+model sale_off {
+  id        Int     @id @default(autoincrement())
+  value     Float
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+}
+
 model category_of_product {
-  id Int @id @default(autoincrement())
+  id      Int @id @default(autoincrement())
   imageId Int
-  
-  name    String @unique
+
+  name String @unique
 
   image image @relation(fields: [imageId], references: [id])
 
@@ -205,6 +222,7 @@ model fair_marketers {
   fair       fair     @relation(fields: [fairId], references: [id], onDelete: Cascade)
   marketer   marketer @relation(fields: [marketerId], references: [id], onDelete: Cascade)
 
+  @@unique([fairId, marketerId])
   @@index([fairId], map: "fair_marketers_fairId_fkey")
   @@index([marketerId], map: "fair_marketers_marketerId_fkey")
 }
@@ -280,7 +298,7 @@ model image_of_product {
   productId  Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  image      image    @relation(fields: [imageId], references: [id])
+  image      image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
   product    product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([imageId], map: "image_of_product_imageId_fkey")

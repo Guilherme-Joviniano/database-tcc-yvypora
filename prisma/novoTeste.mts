@@ -192,14 +192,52 @@ async function createMarketer() {
 
 // await createMarketer();
 
-await db.day_of_week.createMany({
-  data: [
-    { name: "Segunda-Feira" },
-    { name: "Terça-Feira" },
-    { name: "Quarta-Feira" },
-    { name: "Quinta-Feira" },
-    { name: "Sexta-Feira" },
-    { name: "Sabado" },
-    { name: "Domingo" },
-  ],
-});
+// await db.day_of_week.createMany({
+//   data: [
+//     { name: "Segunda-Feira" },
+//     { name: "Terça-Feira" },
+//     { name: "Quarta-Feira" },
+//     { name: "Quinta-Feira" },
+//     { name: "Sexta-Feira" },
+//     { name: "Sabado" },
+//     { name: "Domingo" },
+//   ],
+// });
+
+// await db.type_of_price.createMany({
+//   data: [{ name: "Granel" }, { name: "Unitario" }, { name: "Duzia" }],
+// });
+
+
+await db.category_of_product.create({
+  data: {
+    name: "Frutas",
+    image: {
+      create: {
+        uri: "https://w7.pngwing.com/pngs/375/323/png-transparent-wild-strawberry-fruit-strawberry-fruit-natural-foods-frutti-di-bosco-food-thumbnail.png"
+      }
+    }
+  }
+})
+
+await db.category_of_product.create({
+  data: {
+    name: "Vegetais",
+    image: {
+      create: {
+        uri: "https://img.favpng.com/10/2/8/vegetable-high-definition-television-high-definition-video-display-resolution-wallpaper-png-favpng-wTpc1A3TMi8wXbcBNHc5PWHS1.jpg"
+      }
+    }
+  }
+})
+
+await db.category_of_product.create({
+  data: {
+    name: "Especiarias",
+    image: {
+      create: {
+        uri: "https://e7.pngegg.com/pngimages/861/863/png-clipart-colorful-spices-spices-colorful.png"
+      }
+    }
+  }
+})
