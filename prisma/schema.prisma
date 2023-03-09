@@ -30,6 +30,7 @@ model costumer {
   created_at         DateTime             @default(now())
   updated_at         DateTime             @updatedAt
   genderId           Int
+  birthday           String
   cpf                String?              @unique @db.VarChar(13)
   gender             gender               @relation(fields: [genderId], references: [id])
   costumer_addresses costumer_addresses[]
@@ -48,6 +49,7 @@ model deliveryman {
   created_at          DateTime              @default(now())
   updated_at          DateTime              @updatedAt
   genderId            Int
+  birthday            String
   gender              gender                @relation(fields: [genderId], references: [id])
   location            location              @relation(fields: [locationId], references: [id])
   order               order[]
@@ -145,7 +147,7 @@ model product {
   category_of_product   category_of_product @relation(fields: [category_of_productId], references: [id], onDelete: Restrict)
   category_of_productId Int
 
-  type_of_price   type_of_price @relation(fields: [type_of_productId], references: [id])
+  type_of_price     type_of_price @relation(fields: [type_of_productId], references: [id])
   type_of_productId Int
 
   sale_off sale_off[]
@@ -187,6 +189,7 @@ model marketer {
   online         Boolean          @default(false)
   locationId     Int              @unique
   created_at     DateTime         @default(now())
+  birthday       String
   updated_at     DateTime         @updatedAt
   genderId       Int
   cnpj           String?          @unique @db.VarChar(18)
@@ -350,7 +353,7 @@ model date_and_hour_of_work {
 
 model day_of_week {
   id                    Int                     @id @unique @default(autoincrement())
-  name                  String                  @db.VarChar(20)
+  name                  String                  @db.VarChar(20) @unique
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
   date_and_hour_of_work date_and_hour_of_work[]
