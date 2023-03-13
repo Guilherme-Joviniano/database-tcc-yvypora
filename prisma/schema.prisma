@@ -135,6 +135,7 @@ model product {
   id                        Int                         @id @unique @default(autoincrement())
   name                      String                      @db.VarChar(120)
   price                     Float
+  review                    Float                       @default(0.0)
   active_for_selling        Boolean                     @default(true)
   available_quantity        Int
   marketerId                Int
@@ -353,7 +354,7 @@ model date_and_hour_of_work {
 
 model day_of_week {
   id                    Int                     @id @unique @default(autoincrement())
-  name                  String                  @db.VarChar(20) @unique
+  name                  String                  @unique @db.VarChar(20)
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
   date_and_hour_of_work date_and_hour_of_work[]
