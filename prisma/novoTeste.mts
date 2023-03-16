@@ -14,7 +14,7 @@ import bcryptjs from "bcryptjs";
 // });
 
 // const newLocal = await db.type_of_price.createMany({
-//   data: [{ name: "Granel" }, { name: "Unitario" }, { name: "Duzia" }],
+//   data: [{ name: "Peso" }, { name: "Unitario" }, { name: "Duzia" }],
 // });
 
 // await db.category_of_product.create({
@@ -58,7 +58,7 @@ import bcryptjs from "bcryptjs";
 //   data: {
 //     name: "Feirate de Exemplo",
 //     email: "marketer@gmail.com",
-//     password_hash: "1231312312",
+//     password_hash: await bcryptjs.hash("12345678", 6),
 //     birthday: "1988-02-02",
 //     phone: "+5511987728938",
 //     cpf: "14352417890",
@@ -71,23 +71,6 @@ import bcryptjs from "bcryptjs";
 //       create: {
 //         latitude: -20,
 //         longitude: 20,
-//       },
-//     },
-//     products: {
-//       create: {
-//         available_quantity: 100,
-//         name: "Uva",
-//         price: 12.99,
-//         type_of_price: {
-//           connect: {
-//             name: "Duzia",
-//           },
-//         },
-//         category_of_product: {
-//           connect: {
-//             name: "Frutas",
-//           },
-//         },
 //       },
 //     },
 //   },
@@ -103,24 +86,6 @@ import bcryptjs from "bcryptjs";
 //     gender: {
 //       connect: {
 //         id: 1,
-//       },
-//     },
-//     shopping_lists: {
-//       create: {
-//         total: 100,
-//         freight: 0.0,
-//         products_in_shopping_list: {
-//           createMany: {
-//             data: [
-//               {
-//                 productId: 1,
-//               },
-//               {
-//                 productId: 2,
-//               },
-//             ],
-//           },
-//         },
 //       },
 //     },
 //     costumer_addresses: {
@@ -157,35 +122,89 @@ import bcryptjs from "bcryptjs";
 //   },
 // });
 
+// await db.order.create({
+//   data: {
+//     accepted_status: true,
+//     retreat_products_status: true,
+//     delivered_status_for_client: true,
+//     payment: {
+//       create: {
+//         details: "Payment made by PIX",
+//         payment_method: {
+//           create: {
+//             name: "PIX",
+//           },
+//         },
+//       },
+//     },
+//     costumer_addresses: {
+//       connect: {
+//         id: 1,
+//       },
+//     },
+//     shopping_list: {
+//       create: {
+//         total: 100,
+//         costumerId: 1,
+//         products_in_shopping_list: {
+//           create: {
+//             productId: 1,
+//           },
+//         },
+//       },
+//     },
+//     deliveryman: {
+//       create: {
+//         birthday: "2005-11-04",
+//         email: "lulauger2@gmail.com",
+//         name: "Lu laugher",
+//         password_hash: await bcryptjs.hash("12313123", 10),
+//         gender: {
+//           connect: {
+//             id: 2,
+//           },
+//         },
+//         location: {
+//           create: {
+//             latitude: -20,
+//             longitude: -10,
+//           },
+//         },
+//         picture_uri: "dasd",
+//         veicule_deliveryman: {
+//           create: {
+//             veicule: {
+//               create: {
+//                 name: "moto",
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//   },
+// });
+
+// const orders = await db.order.findMany();
+
+// console.log(orders);
+
 await db.order.create({
   data: {
-    accepted_status: true,
-    retreat_products_status: true,
-    delivered_status_for_client: true,
     payment: {
       create: {
-        details: "Payment made by PIX",
+        details: "Payment efetued with pix",
         payment_method: {
           create: {
-            name: "PIX",
+            name: "Pix"
           },
         },
+        status: true,
       },
     },
     costumer_addresses: {
       connect: {
         id: 1,
-      },
-    },
-    shopping_list: {
-      create: {
-        total: 100,
-        costumerId: 1,
-        products_in_shopping_list: {
-          create: {
-            productId: 1,
-          },
-        },
       },
     },
     deliveryman: {
@@ -217,9 +236,25 @@ await db.order.create({
         },
       },
     },
+    shopping_list: {
+      create: {
+        total: 59.99,
+        products_in_shopping_list: {
+          create: {
+            product: {
+              connect: {
+                id: 32,
+              },
+            },
+          },
+        },
+        freight: 19.99,
+        costumer: {
+          connect: {
+            id: 2,
+          },
+        },
+      },
+    },
   },
 });
-
-const orders = await db.order.findMany();
-
-console.log(orders);

@@ -144,6 +144,7 @@ model product {
   image_of_product          image_of_product[]
   marketer                  marketer                    @relation(fields: [marketerId], references: [id], onDelete: Cascade)
   products_in_shopping_list products_in_shopping_list[]
+  description               String
 
   category_of_product   category_of_product @relation(fields: [category_of_productId], references: [id], onDelete: Restrict)
   category_of_productId Int
@@ -316,6 +317,7 @@ model image {
   updated_at          DateTime              @updatedAt
   image_of_product    image_of_product[]
   category_of_product category_of_product[]
+  
 }
 
 model payment_method {
