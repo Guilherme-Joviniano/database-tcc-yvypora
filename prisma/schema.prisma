@@ -90,15 +90,16 @@ model order {
   accepted_status             Boolean            @default(false)
   delivered_status_for_client Boolean            @default(false)
   retreat_products_status     Boolean            @default(false)
-  deliverymanId               Int
+  deliverymanId               Int?
   shopping_listId             Int                @unique
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @updatedAt
   costumer_addressesId        Int
   costumer_addresses          costumer_addresses @relation(fields: [costumer_addressesId], references: [id], onDelete: Cascade)
-  deliveryman                 deliveryman        @relation(fields: [deliverymanId], references: [id], onDelete: Cascade)
+  deliveryman                 deliveryman?       @relation(fields: [deliverymanId], references: [id], onDelete: Cascade)
   shopping_list               shopping_list      @relation(fields: [shopping_listId], references: [id], onDelete: Cascade)
   payment                     payment?
+  intent_payment_id           String
 
   @@index([costumer_addressesId], map: "order_costumer_addressesId_fkey")
   @@index([deliverymanId], map: "order_deliverymanId_fkey")
@@ -206,6 +207,7 @@ model marketer {
 }
 
 model fair {
+  name                   String
   id                     Int                      @id @unique @default(autoincrement())
   review                 Float                    @default(0)
   addressId              Int                      @unique
@@ -216,6 +218,7 @@ model fair {
   fair_marketers         fair_marketers[]
   location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId             Int
+  images                 image[]
 }
 
 model fair_marketers {
@@ -317,7 +320,8 @@ model image {
   updated_at          DateTime              @updatedAt
   image_of_product    image_of_product[]
   category_of_product category_of_product[]
-  
+  fair                fair?                 @relation(fields: [fairId], references: [id])
+  fairId              Int?
 }
 
 model payment_method {

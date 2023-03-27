@@ -189,72 +189,76 @@ import bcryptjs from "bcryptjs";
 
 // console.log(orders);
 
-await db.order.create({
-  data: {
-    payment: {
-      create: {
-        details: "Payment efetued with pix",
-        payment_method: {
-          create: {
-            name: "Pix"
-          },
-        },
-        status: true,
-      },
-    },
-    costumer_addresses: {
-      connect: {
-        id: 1,
-      },
-    },
-    deliveryman: {
-      create: {
-        birthday: "2005-11-04",
-        email: "lulauger2@gmail.com",
-        name: "Lu laugher",
-        password_hash: await bcryptjs.hash("12313123", 10),
-        gender: {
-          connect: {
-            id: 2,
-          },
-        },
-        location: {
-          create: {
-            latitude: -20,
-            longitude: -10,
-          },
-        },
-        picture_uri: "dasd",
-        veicule_deliveryman: {
-          create: {
-            veicule: {
-              create: {
-                name: "moto",
-              },
-            },
-          },
-        },
-      },
-    },
-    shopping_list: {
-      create: {
-        total: 59.99,
-        products_in_shopping_list: {
-          create: {
-            product: {
-              connect: {
-                id: 32,
-              },
-            },
-          },
-        },
-        freight: 19.99,
-        costumer: {
-          connect: {
-            id: 2,
-          },
-        },
-      },
-    },
-  },
+// await db.order.create({
+//   data: {
+//     payment: {
+//       create: {
+//         details: "Payment efetued with pix",
+//         payment_method: {
+//           create: {
+//             name: "Pix"
+//           },
+//         },
+//         status: true,
+//       },
+//     },
+//     costumer_addresses: {
+//       connect: {
+//         id: 1,
+//       },
+//     },
+//     deliveryman: {
+//       create: {
+//         birthday: "2005-11-04",
+//         email: "lulauger2@gmail.com",
+//         name: "Lu laugher",
+//         password_hash: await bcryptjs.hash("12313123", 10),
+//         gender: {
+//           connect: {
+//             id: 2,
+//           },
+//         },
+//         location: {
+//           create: {
+//             latitude: -20,
+//             longitude: -10,
+//           },
+//         },
+//         picture_uri: "dasd",
+//         veicule_deliveryman: {
+//           create: {
+//             veicule: {
+//               create: {
+//                 name: "moto",
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//     shopping_list: {
+//       create: {
+//         total: 59.99,
+//         products_in_shopping_list: {
+//           create: {
+//             product: {
+//               connect: {
+//                 id: 32,
+//               },
+//             },
+//           },
+//         },
+//         freight: 19.99,
+//         costumer: {
+//           connect: {
+//             id: 2,
+//           },
+//         },
+//       },
+//     },
+//   },
+// });
+
+await db.address_type.createMany({
+  data: [{ name: "Apartamento" }, { name: "Feira" }],
 });
