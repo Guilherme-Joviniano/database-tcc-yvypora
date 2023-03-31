@@ -99,7 +99,7 @@ model order {
   deliveryman                 deliveryman?       @relation(fields: [deliverymanId], references: [id], onDelete: Cascade)
   shopping_list               shopping_list      @relation(fields: [shopping_listId], references: [id], onDelete: Cascade)
   payment                     payment?
-  intent_payment_id           String
+  intent_payment_id           String @unique
 
   @@index([costumer_addressesId], map: "order_costumer_addressesId_fkey")
   @@index([deliverymanId], map: "order_deliverymanId_fkey")
