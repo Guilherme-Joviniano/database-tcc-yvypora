@@ -2,9 +2,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-}
+// generator erd {
+//   provider = "prisma-erd-generator"
+// }
 
 datasource db {
   provider = "mysql"
@@ -99,7 +99,7 @@ model order {
   deliveryman                 deliveryman?       @relation(fields: [deliverymanId], references: [id], onDelete: Cascade)
   shopping_list               shopping_list      @relation(fields: [shopping_listId], references: [id], onDelete: Cascade)
   payment                     payment?
-  intent_payment_id           String @unique
+  intent_payment_id           String             @unique
 
   @@index([costumer_addressesId], map: "order_costumer_addressesId_fkey")
   @@index([deliverymanId], map: "order_deliverymanId_fkey")
@@ -258,6 +258,7 @@ model location {
   deliveryman deliveryman?
   marketer    marketer?
   fair        fair[]
+  address     address[]
 }
 
 model address {
@@ -269,6 +270,7 @@ model address {
   address_typeId     Int
   complemento        String
   type               address_type         @relation(fields: [address_typeId], references: [id])
+  location           location             @relation(fields: [locationId], references: [id])
   costumer_addresses costumer_addresses[]
   fair               fair?
 
@@ -279,7 +281,9 @@ model address {
   uFId Int
 
   neighborhood   neighborhood @relation(fields: [neighborhoodId], references: [id])
+  
   neighborhoodId Int
+  locationId     Int
 
   @@index([address_typeId], map: "address_address_typeId_fkey")
 }
