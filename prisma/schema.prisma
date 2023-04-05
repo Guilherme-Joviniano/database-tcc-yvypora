@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 generator erd {
@@ -54,7 +55,10 @@ model deliveryman {
   location            location              @relation(fields: [locationId], references: [id])
   order               order[]
   veicule_deliveryman veicule_deliveryman[]
-
+  
+  @@fulltext([email])
+  @@fulltext([name])
+  @@fulltext([name, email])
   @@index([genderId], map: "deliveryman_genderId_fkey")
 }
 
@@ -155,6 +159,10 @@ model product {
 
   sale_off sale_off[]
 
+  @@fulltext([name])
+  @@fulltext([description])
+  @@fulltext([description, name])
+
   @@index([marketerId], map: "product_marketerId_fkey")
 }
 
@@ -203,6 +211,8 @@ model marketer {
   location       location         @relation(fields: [locationId], references: [id])
   products       product[]
 
+
+  @@fulltext([name])
   @@index([genderId], map: "marketer_genderId_fkey")
 }
 
@@ -219,6 +229,8 @@ model fair {
   location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId             Int
   images                 image[]
+
+  @@fulltext([name])
 }
 
 model fair_marketers {
