@@ -1,10 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
-
-// generator erd {
-//   provider = "prisma-erd-generator"
-// }
 
 datasource db {
   provider = "mysql"
@@ -46,6 +43,7 @@ model deliveryman {
   password_hash       String                @db.VarChar(255)
   picture_uri         String                @db.VarChar(255)
   locationId          Int                   @unique
+  online              Boolean               @default(false)
   created_at          DateTime              @default(now())
   updated_at          DateTime              @updatedAt
   genderId            Int
@@ -156,6 +154,9 @@ model product {
   sale_off sale_off[]
 
   @@index([marketerId], map: "product_marketerId_fkey")
+  @@fulltext([name])
+  @@fulltext([description])
+  @@fulltext([name, description])
 }
 
 model type_of_price {
@@ -204,6 +205,7 @@ model marketer {
   products       product[]
 
   @@index([genderId], map: "marketer_genderId_fkey")
+  @@fulltext([name])
 }
 
 model fair {
@@ -219,6 +221,8 @@ model fair {
   location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId             Int
   images                 image[]
+
+  @@fulltext([name])
 }
 
 model fair_marketers {
@@ -280,8 +284,8 @@ model address {
   uf   UF  @relation(fields: [uFId], references: [id])
   uFId Int
 
-  neighborhood   neighborhood @relation(fields: [neighborhoodId], references: [id])
-  
+  neighborhood neighborhood @relation(fields: [neighborhoodId], references: [id])
+
   neighborhoodId Int
   locationId     Int
 

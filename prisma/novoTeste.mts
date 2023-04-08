@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 import bcryptjs from "bcryptjs";
+
 await db.day_of_week.createMany({
   data: [
     { name: "Segunda-Feira" },
@@ -13,7 +14,7 @@ await db.day_of_week.createMany({
   ],
 });
 
-const newLocal = await db.type_of_price.createMany({
+await db.type_of_price.createMany({
   data: [{ name: "Peso" }, { name: "Unitario" }, { name: "Duzia" }],
 });
 
@@ -76,7 +77,7 @@ await db.marketer.create({
   },
 });
 
-const user = await db.costumer.create({
+await db.costumer.create({
   data: {
     name: "Guilherme Joviniano de Sousa",
     birthday: "2006-04-04",
@@ -95,6 +96,12 @@ const user = await db.costumer.create({
             cep: "06233250",
             complemento: "Atras do sesi",
             number: 146,
+            location: {
+              create: {
+                latitude: 0,
+                longitude: 0,
+              },
+            },
             neighborhood: {
               create: {
                 name: "I.A.PI",
@@ -117,6 +124,28 @@ const user = await db.costumer.create({
             },
           },
         },
+      },
+    },
+  },
+});
+
+await db.deliveryman.create({
+  data: {
+    name: "entregador de teste",
+    birthday: "2005-11-04",
+    email: "entregador@gmail.com",
+    password_hash: await bcryptjs.hash("1234", 5),
+    picture_uri:
+      "https://www.clubeindriver.com.br/wp-content/uploads/2021/09/indriver-entregador.png",
+    gender: {
+      connect: {
+        id: 1,
+      },
+    },
+    location: {
+      create: {
+        latitude: 0,
+        longitude: 0,
       },
     },
   },
@@ -260,5 +289,5 @@ const user = await db.costumer.create({
 // });
 
 await db.address_type.createMany({
-  data: [ { name: "Casa" }, { name: "Apartamento" }, { name: "Feira" }],
+  data: [{ name: "Casa" }, { name: "Apartamento" }, { name: "Feira" }],
 });
