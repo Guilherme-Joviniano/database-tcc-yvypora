@@ -141,7 +141,7 @@ model product {
   marketerId                Int
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
-  description               String
+  description               String 	@db.VarChar(512)
   category_of_productId     Int
   type_of_productId         Int
   image_of_product          image_of_product[]
