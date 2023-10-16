@@ -1,4 +1,10 @@
 generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
@@ -52,7 +58,10 @@ model deliveryman {
   location            location              @relation(fields: [locationId], references: [id])
   order               order[]
   veicule_deliveryman veicule_deliveryman[]
-
+  
+  @@fulltext([email])
+  @@fulltext([name])
+  @@fulltext([name, email])
   @@index([genderId], map: "deliveryman_genderId_fkey")
 }
 
@@ -151,6 +160,10 @@ model product {
   products_in_shopping_list products_in_shopping_list[]
   sale_off                  sale_off[]
 
+  @@fulltext([name])
+  @@fulltext([description])
+  @@fulltext([description, name])
+
   @@index([marketerId], map: "product_marketerId_fkey")
   @@index([name])
   @@index([description])
@@ -206,6 +219,8 @@ model marketer {
   location       location         @relation(fields: [locationId], references: [id])
   products       product[]
 
+
+  @@fulltext([name])
   @@index([genderId], map: "marketer_genderId_fkey")
   @@index([name])
 }
@@ -224,10 +239,11 @@ model fair {
   fair_marketers         fair_marketers[]
   images                 image[]
 
+
+  @@fulltext([name])
   @@index([name])
   @@index([locationId], map: "fair_locationId_fkey")
 }
-
 model fair_marketers {
   id         Int      @id @unique @default(autoincrement())
   fairId     Int
