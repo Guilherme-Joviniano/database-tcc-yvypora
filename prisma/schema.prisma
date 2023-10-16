@@ -5,6 +5,8 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -47,6 +49,7 @@ model deliveryman {
   password_hash       String                @db.VarChar(255)
   picture_uri         String                @db.VarChar(255)
   locationId          Int                   @unique
+  online              Boolean               @default(false)
   created_at          DateTime              @default(now())
   updated_at          DateTime              @updatedAt
   genderId            Int
@@ -99,11 +102,11 @@ model order {
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @updatedAt
   costumer_addressesId        Int
+  intent_payment_id           String             @unique
   costumer_addresses          costumer_addresses @relation(fields: [costumer_addressesId], references: [id], onDelete: Cascade)
   deliveryman                 deliveryman?       @relation(fields: [deliverymanId], references: [id], onDelete: Cascade)
   shopping_list               shopping_list      @relation(fields: [shopping_listId], references: [id], onDelete: Cascade)
   payment                     payment?
-  intent_payment_id           String @unique
 
   @@index([costumer_addressesId], map: "order_costumer_addressesId_fkey")
   @@index([deliverymanId], map: "order_deliverymanId_fkey")
@@ -140,30 +143,33 @@ model product {
   id                        Int                         @id @unique @default(autoincrement())
   name                      String                      @db.VarChar(120)
   price                     Float
-  review                    Float                       @default(0.0)
+  quantity                  Float?
+  review                    Float                       @default(0)
   active_for_selling        Boolean                     @default(true)
   available_quantity        Int
   marketerId                Int
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @updatedAt
+  description               String 	@db.VarChar(512)
+  category_of_productId     Int
+  type_of_productId         Int
   image_of_product          image_of_product[]
+  category_of_product       category_of_product         @relation(fields: [category_of_productId], references: [id])
   marketer                  marketer                    @relation(fields: [marketerId], references: [id], onDelete: Cascade)
+  type_of_price             type_of_price               @relation(fields: [type_of_productId], references: [id])
   products_in_shopping_list products_in_shopping_list[]
-  description               String
-
-  category_of_product   category_of_product @relation(fields: [category_of_productId], references: [id], onDelete: Restrict)
-  category_of_productId Int
-
-  type_of_price     type_of_price @relation(fields: [type_of_productId], references: [id])
-  type_of_productId Int
-
-  sale_off sale_off[]
+  sale_off                  sale_off[]
 
   @@fulltext([name])
   @@fulltext([description])
   @@fulltext([description, name])
 
   @@index([marketerId], map: "product_marketerId_fkey")
+  @@index([name])
+  @@index([description])
+  @@index([name, description])
+  @@index([category_of_productId], map: "product_category_of_productId_fkey")
+  @@index([type_of_productId], map: "product_type_of_productId_fkey")
 }
 
 model type_of_price {
@@ -175,19 +181,20 @@ model type_of_price {
 model sale_off {
   id        Int     @id @default(autoincrement())
   value     Float
-  product   product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId], map: "sale_off_productId_fkey")
 }
 
 model category_of_product {
-  id      Int @id @default(autoincrement())
-  imageId Int
-
-  name String @unique
-
-  image image @relation(fields: [imageId], references: [id])
-
+  id       Int       @id @default(autoincrement())
+  imageId  Int
+  name     String    @unique
+  image    image     @relation(fields: [imageId], references: [id])
   products product[]
+
+  @@index([imageId], map: "category_of_product_imageId_fkey")
 }
 
 model marketer {
@@ -206,6 +213,7 @@ model marketer {
   cnpj           String?          @unique @db.VarChar(18)
   cpf            String?          @unique @db.VarChar(13)
   phone          String           @db.VarChar(15)
+  tent_name      String           @db.VarChar(120)
   fair_marketers fair_marketers[]
   gender         gender           @relation(fields: [genderId], references: [id])
   location       location         @relation(fields: [locationId], references: [id])
@@ -214,6 +222,7 @@ model marketer {
 
   @@fulltext([name])
   @@index([genderId], map: "marketer_genderId_fkey")
+  @@index([name])
 }
 
 model fair {
@@ -223,16 +232,18 @@ model fair {
   addressId              Int                      @unique
   created_at             DateTime                 @default(now())
   updated_at             DateTime                 @updatedAt
+  locationId             Int
   address                address                  @relation(fields: [addressId], references: [id])
+  location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
   fair_date_hour_of_work fair_date_hour_of_work[]
   fair_marketers         fair_marketers[]
-  location               location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  locationId             Int
   images                 image[]
 
-  @@fulltext([name])
-}
 
+  @@fulltext([name])
+  @@index([name])
+  @@index([locationId], map: "fair_locationId_fkey")
+}
 model fair_marketers {
   id         Int      @id @unique @default(autoincrement())
   fairId     Int
@@ -267,33 +278,38 @@ model location {
   latitude    Float
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
+  address     address[]
   deliveryman deliveryman?
-  marketer    marketer?
   fair        fair[]
+  marketer    marketer?
 }
 
 model address {
   id                 Int                  @id @unique @default(autoincrement())
   cep                String
+  logradouro         String
   number             Int
   created_at         DateTime             @default(now())
   updated_at         DateTime             @updatedAt
   address_typeId     Int
   complemento        String
+  cityId             Int
+  uFId               Int
+  neighborhoodId     Int
+  locationId         Int
   type               address_type         @relation(fields: [address_typeId], references: [id])
+  city               city                 @relation(fields: [cityId], references: [id])
+  location           location             @relation(fields: [locationId], references: [id])
+  neighborhood       neighborhood         @relation(fields: [neighborhoodId], references: [id])
+  uf                 uf                   @relation(fields: [uFId], references: [id])
   costumer_addresses costumer_addresses[]
   fair               fair?
 
-  city   city @relation(fields: [cityId], references: [id])
-  cityId Int
-
-  uf   UF  @relation(fields: [uFId], references: [id])
-  uFId Int
-
-  neighborhood   neighborhood @relation(fields: [neighborhoodId], references: [id])
-  neighborhoodId Int
-
   @@index([address_typeId], map: "address_address_typeId_fkey")
+  @@index([cityId], map: "address_cityId_fkey")
+  @@index([locationId], map: "address_locationId_fkey")
+  @@index([neighborhoodId], map: "address_neighborhoodId_fkey")
+  @@index([uFId], map: "address_uFId_fkey")
 }
 
 model address_type {
@@ -330,10 +346,12 @@ model image {
   uri                 String                @db.VarChar(255)
   created_at          DateTime              @default(now())
   updated_at          DateTime              @updatedAt
-  image_of_product    image_of_product[]
+  fairId              Int?
   category_of_product category_of_product[]
   fair                fair?                 @relation(fields: [fairId], references: [id])
-  fairId              Int?
+  image_of_product    image_of_product[]
+
+  @@index([fairId], map: "image_fairId_fkey")
 }
 
 model payment_method {
@@ -384,14 +402,14 @@ model city {
   address address[]
 }
 
-model UF {
+model neighborhood {
   id      Int       @id @default(autoincrement())
   name    String    @unique
   address address[]
 }
 
-model neighborhood {
+model uf {
   id      Int       @id @default(autoincrement())
-  name    String    @unique
+  name    String    @unique(map: "UF_name_key")
   address address[]
 }
